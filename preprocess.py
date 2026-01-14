@@ -24,9 +24,9 @@ GOOGLE_DRIVE_FILE_ID = "1ynZLpShH5VriNBy6ohAmSDTj_be38s3d"
 URL_DATASET_ZIP = f"https://drive.google.com/uc?export=download&id={GOOGLE_DRIVE_FILE_ID}"
 
 # Configuration
-TEMP_DIR = "temp_images"
+IMAGES_DIR = "images_sources"  # Répertoire permanent pour les images
 TARGET_SIZE = (150, 150)
-FORMATS_SUPPORTES = {'.jpg', '.jpeg', '.png', '.bmp', '.gif'}
+FORMATS_SUPPORTES = {'.jpg', '.jpeg', '.png', '.bmp', '.gif', '.webp', '.jfif'}
 
 
 def telecharger_zip(url: str, destination: str) -> bool:
@@ -176,26 +176,23 @@ def traiter_images(source_dir: str) -> int:
     return compteur_succes
 
 
-def nettoyer_fichiers_temporaires(temp_dir: str, zip_path: str) -> None:
+def nettoyer_fichiers_temporaires(zip_path: str) -> None:
     """
-    Supprime les fichiers temporaires (ZIP et répertoire d'extraction).
+    Supprime uniquement le fichier ZIP téléchargé.
+    Les images dans images_sources/ sont conservées de façon permanente.
     
     Args:
-        temp_dir: Répertoire temporaire à supprimer
         zip_path: Fichier ZIP à supprimer
     """
     print(f"[>>] Nettoyage des fichiers temporaires...")
     
     try:
-        # Suppression du répertoire temporaire
-        if os.path.exists(temp_dir):
-            shutil.rmtree(temp_dir)
-            print(f"  [OK] Repertoire {temp_dir} supprime")
-        
-        # Suppression du ZIP
+        # Suppression du ZIP uniquement
         if os.path.exists(zip_path):
             os.remove(zip_path)
             print(f"  [OK] Fichier {zip_path} supprime")
+        
+        print(f"  [INFO] Les images dans images_sources/ sont conservees")
             
     except Exception as e:
         print(f"  [!] Erreur lors du nettoyage: {e}")
@@ -237,23 +234,23 @@ def main():
     # Étape 3: Extraction
     print("\n[3/5] Extraction du ZIP")
     
-    if not extraire_zip(zip_path, TEMP_DIR):
+    if not extraire_zip(zip_path, IMAGES_DIR):
         print("\n[ERREUR] Echec de l'extraction.")
-        nettoyer_fichiers_temporaires(TEMP_DIR, zip_path)
+        nettoyer_fichiers_temporaires(zip_path)
         return
     
     # Étape 4: Traitement des images
     print("\n[4/5] Traitement et insertion en base")
-    nb_images = traiter_images(TEMP_DIR)
+    nb_images = traiter_images(IMAGES_DIR)
     
     if nb_images == 0:
         print("\n[ERREUR] Aucune image n'a pu etre traitee.")
-        nettoyer_fichiers_temporaires(TEMP_DIR, zip_path)
+        nettoyer_fichiers_temporaires(zip_path)
         return
     
     # Étape 5: Nettoyage
     print("\n[5/5] Nettoyage")
-    nettoyer_fichiers_temporaires(TEMP_DIR, zip_path)
+    nettoyer_fichiers_temporaires(zip_path)
     
     # Statistiques finales
     print("\n" + "=" * 60)
@@ -261,6 +258,7 @@ def main():
     print("=" * 60)
     stats = database.get_statistiques()
     print(f"[OK] {stats['total_images']} images pretes pour la labelisation")
+    print(f"[INFO] Images sources conservees dans: {IMAGES_DIR}/")
     print(f"\nVous pouvez maintenant lancer: python main.py")
 
 

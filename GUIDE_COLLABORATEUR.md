@@ -19,9 +19,6 @@ git clone https://github.com/EnesClk57/SAE_CAPTCHA.git
 cd SAE_CAPTCHA
 ```
 
-> [!NOTE]
-> Le dépôt inclut `duckdb.exe` et les images sources dans `images_sources/`. Vous n'avez pas besoin de télécharger de fichiers supplémentaires.
-
 ### 2. Installer les dépendances
 ```bash
 pip install -r requirements.txt

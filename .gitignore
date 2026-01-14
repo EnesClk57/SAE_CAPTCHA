@@ -12,6 +12,9 @@ __pycache__/
 temp_images/
 dataset.zip
 
+# Images sources (téléchargées localement, pas dans Git)
+images_sources/
+
 # Exports de données
 export_*/
 
