@@ -15,9 +15,12 @@ Système de capchat  pour classifier d' images en **Oiseau** vs **Non-Oiseau**.
 
 ### 1. Cloner et accéder au projet
 ```bash
-git clone <url-du-repo>
-cd SAE_CAPCHAT
+git clone https://github.com/EnesClk57/SAE_CAPTCHA.git
+cd SAE_CAPTCHA
 ```
+
+> [!NOTE]
+> Le dépôt inclut `duckdb.exe` et les images sources dans `images_sources/`. Vous n'avez pas besoin de télécharger de fichiers supplémentaires.
 
 ### 2. Installer les dépendances
 ```bash
@@ -30,6 +33,14 @@ pip install -r requirements.txt
 - `Pillow>=10.0.0` - Traitement d'images
 - `requests>=2.31.0` - Téléchargement dataset
 - `numpy>=1.24.0` - Calculs numériques
+
+### 3. Initialiser la base de données (optionnel)
+```bash
+python preprocess.py
+```
+
+> [!TIP]
+> Cette étape n'est nécessaire que si vous voulez créer/recréer la base de données depuis zéro avec les images sources.
 
 ---
 
@@ -79,18 +90,6 @@ python preprocess.py
 # 2. Labelliser les images
 python main.py
 ```
-
-### Utilisation courante
-```bash
-# Labelliser
-python main.py
-
-# Exporter pour analyse
-python exporter_donnees.py
-```
-
----
-
 ## Fichiers CSV Exportés
 
 | Fichier | Contenu | Utilisation |

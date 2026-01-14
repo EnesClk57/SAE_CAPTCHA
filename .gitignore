@@ -12,14 +12,12 @@ __pycache__/
 temp_images/
 dataset.zip
 
-# Images sources (trop volumineuses pour GitHub)
-images_sources/
-
 # Exports de données
 export_*/
 
-# Exécutables
+# Exécutables (sauf duckdb.exe)
 *.exe
+!duckdb.exe
 
 # Environnement virtuel
 venv/
