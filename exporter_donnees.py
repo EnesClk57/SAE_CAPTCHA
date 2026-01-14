@@ -19,13 +19,13 @@ def exporter_donnees():
     try:
         # Creer le dossier
         os.makedirs(dossier, exist_ok=True)
-        print(f"\n[EXPORT] Dossier: {dossier}/\n")
+        print(f"\n Dossier: {dossier}/\n")
         
         # Connexion a la base
         conn = duckdb.connect('labeling.duckdb', read_only=True)
         
         # 1. Export des votes
-        print("[1/3] Export des votes...")
+        print("Export des votes...")
         conn.execute(f"""
             COPY (
                 SELECT id, image_id, vote, timestamp
@@ -37,7 +37,7 @@ def exporter_donnees():
         print(f"      {nb_votes} votes exportes\n")
         
         # 2. Export des statistiques par image
-        print("[2/3] Export des statistiques...")
+        print("Export des statistiques...")
         conn.execute(f"""
             COPY (
                 SELECT 
@@ -56,7 +56,7 @@ def exporter_donnees():
         print(f"      {nb_images} images traitees\n")
         
         # 3. Export du resume (consensus + incertitudes)
-        print("[3/3] Export du resume...")
+        print("Export du resume...")
         conn.execute(f"""
             COPY (
                 SELECT 
@@ -96,9 +96,7 @@ def exporter_donnees():
         conn.close()
         
         # Succes
-        print("=" * 60)
-        print("[OK] EXPORT TERMINE")
-        print("=" * 60)
+        print("EXPORT TERMINE")
         print(f"\nFichiers exportes dans: {dossier}/")
         print("  - votes.csv         : Tous les votes")
         print("  - statistiques.csv  : Stats par image")
@@ -108,18 +106,16 @@ def exporter_donnees():
         return True
         
     except FileNotFoundError:
-        print("[ERREUR] Fichier labeling.duckdb introuvable")
+        print(" Fichier labeling.duckdb introuvable")
         return False
     
     except Exception as e:
-        print(f"[ERREUR] {e}")
+        print(f" {e}")
         return False
 
 
 if __name__ == "__main__":
-    print("=" * 60)
     print("EXPORT DES DONNEES - labeling.duckdb")
-    print("=" * 60)
     
     success = exporter_donnees()
     

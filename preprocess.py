@@ -19,7 +19,6 @@ from typing import Optional
 import database
 
 # URL du dataset (Google Drive)
-# Format: https://drive.google.com/uc?export=download&id=FILE_ID
 GOOGLE_DRIVE_FILE_ID = "1ynZLpShH5VriNBy6ohAmSDTj_be38s3d"
 URL_DATASET_ZIP = f"https://drive.google.com/uc?export=download&id={GOOGLE_DRIVE_FILE_ID}"
 
@@ -68,7 +67,7 @@ def telecharger_zip(url: str, destination: str) -> bool:
                         progress = (downloaded / total_size) * 100
                         print(f"\r  Progression: {progress:.1f}%", end='')
         
-        print(f"\n[OK] Telechargement termine ({downloaded / 1024 / 1024:.2f} MB)")
+        print(f"\n Telechargement termine ({downloaded / 1024 / 1024:.2f} MB)")
         return True
         
     except Exception as e:
@@ -95,7 +94,7 @@ def extraire_zip(zip_path: str, extract_dir: str) -> bool:
         
         # Compter les fichiers extraits
         nb_fichiers = sum(1 for _ in Path(extract_dir).rglob('*') if _.is_file())
-        print(f"[OK] {nb_fichiers} fichiers extraits")
+        print(f" {nb_fichiers} fichiers extraits")
         return True
         
     except Exception as e:
@@ -127,9 +126,8 @@ def image_vers_blob(image_path: str) -> Optional[bytes]:
         return blob
         
     except Exception as e:
-        print(f"  [!] Erreur avec {image_path}: {e}")
+        print(f" Erreur avec {image_path}: {e}")
         return None
-
 
 def traiter_images(source_dir: str) -> int:
     """
@@ -141,7 +139,7 @@ def traiter_images(source_dir: str) -> int:
     Returns:
         Nombre d'images traitées avec succès
     """
-    print(f"[>>] Traitement des images...")
+    print(f"Traitement des images...")
     
     # Recherche récursive de toutes les images
     images_paths = []
@@ -153,7 +151,7 @@ def traiter_images(source_dir: str) -> int:
     print(f"  {total} images trouvees")
     
     if total == 0:
-        print("  [!] Aucune image trouvee dans le repertoire")
+        print(" Aucune image trouvee dans le repertoire")
         return 0
     
     # Traitement et insertion
@@ -172,7 +170,7 @@ def traiter_images(source_dir: str) -> int:
             if i % 10 == 0 or i == total:
                 print(f"\r  Progression: {i}/{total} ({compteur_succes} réussies)", end='')
     
-    print(f"\n[OK] {compteur_succes} images inserees en base de donnees")
+    print(f"\n {compteur_succes} images inserees en base de donnees")
     return compteur_succes
 
 
@@ -190,12 +188,12 @@ def nettoyer_fichiers_temporaires(zip_path: str) -> None:
         # Suppression du ZIP uniquement
         if os.path.exists(zip_path):
             os.remove(zip_path)
-            print(f"  [OK] Fichier {zip_path} supprime")
+            print(f"   Fichier {zip_path} supprime")
         
-        print(f"  [INFO] Les images dans images_sources/ sont conservees")
+        print(f" Les images dans images_sources/ sont conservees")
             
     except Exception as e:
-        print(f"  [!] Erreur lors du nettoyage: {e}")
+        print(f"Erreur lors du nettoyage: {e}")
 
 
 def main():
@@ -207,60 +205,55 @@ def main():
     4. Traitement et insertion des images
     5. Nettoyage
     """
-    print("=" * 60)
     print("PREPROCESSING - Chargement du dataset")
-    print("=" * 60)
     
     # Étape 1: Initialisation de la base
-    print("\n[1/5] Initialisation de la base de données")
+    print("\n Initialisation de la base de données")
     database.init_db()
     
     # Vérifier si des images existent déjà
     stats = database.get_statistiques()
     if stats['total_images'] > 0:
-        reponse = input(f"\n[!] La base contient deja {stats['total_images']} images. Continuer? (o/N): ")
+        reponse = input(f" La base contient deja {stats['total_images']} images. Continuer? (o/N): ")
         if reponse.lower() != 'o':
             print("Annulation.")
             return
     
     # Étape 2: Téléchargement
-    print("\n[2/5] Téléchargement du dataset")
+    print("\nTéléchargement du dataset")
     zip_path = "dataset.zip"
     
     if not telecharger_zip(URL_DATASET_ZIP, zip_path):
-        print("\n[ERREUR] Echec du telechargement. Verifiez l'URL ou votre connexion.")
+        print("\n Echec du telechargement. Verifiez l'URL ou votre connexion.")
         return
     
     # Étape 3: Extraction
-    print("\n[3/5] Extraction du ZIP")
+    print("\n Extraction du ZIP")
     
     if not extraire_zip(zip_path, IMAGES_DIR):
-        print("\n[ERREUR] Echec de l'extraction.")
+        print("\n Echec de l'extraction.")
         nettoyer_fichiers_temporaires(zip_path)
         return
     
     # Étape 4: Traitement des images
-    print("\n[4/5] Traitement et insertion en base")
+    print("\n Traitement et insertion en base")
     nb_images = traiter_images(IMAGES_DIR)
     
     if nb_images == 0:
-        print("\n[ERREUR] Aucune image n'a pu etre traitee.")
+        print("\n Aucune image n'a pu etre traitee.")
         nettoyer_fichiers_temporaires(zip_path)
         return
     
     # Étape 5: Nettoyage
-    print("\n[5/5] Nettoyage")
+    print("\n Nettoyage")
     nettoyer_fichiers_temporaires(zip_path)
     
     # Statistiques finales
-    print("\n" + "=" * 60)
     print("PREPROCESSING TERMINÉ")
-    print("=" * 60)
     stats = database.get_statistiques()
-    print(f"[OK] {stats['total_images']} images pretes pour la labelisation")
-    print(f"[INFO] Images sources conservees dans: {IMAGES_DIR}/")
-    print(f"\nVous pouvez maintenant lancer: python main.py")
-
+    print(f" {stats['total_images']} images pretes pour la labelisation")
+    print(f"Images sources conservees dans: {IMAGES_DIR}/")
+    print(f"Vous pouvez maintenant lancer: python main.py")
 
 if __name__ == "__main__":
     main()

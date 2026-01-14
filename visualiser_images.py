@@ -44,7 +44,6 @@ def obtenir_stats_image(conn, image_id):
             'moyenne': None
         }
 
-
 def charger_image(conn, image_id):
     """Charge une image depuis la base de donnees."""
     result = conn.execute("""
@@ -72,8 +71,8 @@ def afficher_image_avec_stats(image_id):
     total_images = conn.execute("SELECT COUNT(*) FROM images").fetchone()[0]
     
     if image_id < 1 or image_id > total_images:
-        print(f"[ERREUR] L'image ID {image_id} n'existe pas.")
-        print(f"[INFO] IDs valides : 1 a {total_images}")
+        print(f" L'image ID {image_id} n'existe pas.")
+        print(f" IDs valides : 1 a {total_images}")
         conn.close()
         return
     
@@ -81,7 +80,7 @@ def afficher_image_avec_stats(image_id):
     img = charger_image(conn, image_id)
     
     if img is None:
-        print(f"[ERREUR] Impossible de charger l'image ID {image_id}")
+        print(f" Impossible de charger l'image ID {image_id}")
         conn.close()
         return
     
@@ -154,7 +153,7 @@ def main():
         try:
             current_id = int(sys.argv[1])
         except ValueError:
-            print("[ERREUR] L'ID doit etre un nombre entier")
+            print(" L'ID doit etre un nombre entier")
             sys.exit(1)
     else:
         current_id = 1
@@ -188,7 +187,7 @@ def main():
         
         # Q: Quitter
         if key == ord('q') or key == ord('Q'):
-            print("\n[OK] Fermeture du visualiseur")
+            print("\n Fermeture du visualiseur")
             break
         
         # Fleche droite: Image suivante
@@ -196,14 +195,14 @@ def main():
             if current_id < total_images:
                 current_id += 1
             else:
-                print(f"[INFO] Derniere image atteinte (ID {total_images})")
+                print(f" Derniere image atteinte (ID {total_images})")
         
         # Fleche gauche: Image precedente
         elif key == 81 or key == 2:  # Fleche gauche
             if current_id > 1:
                 current_id -= 1
             else:
-                print("[INFO] Premiere image atteinte (ID 1)")
+                print(" Premiere image atteinte (ID 1)")
         
         # Entree: Aller a l'ID saisi
         elif key == 13:  # Entree
@@ -212,20 +211,19 @@ def main():
                     new_id = int(input_buffer)
                     if 1 <= new_id <= total_images:
                         current_id = new_id
-                        print(f"[OK] Navigation vers image ID {current_id}")
+                        print(f" Navigation vers image ID {current_id}")
                     else:
-                        print(f"[ERREUR] ID invalide. Valeurs acceptees: 1-{total_images}")
+                        print(f" ID invalide. Valeurs acceptees: 1-{total_images}")
                 except ValueError:
-                    print("[ERREUR] Veuillez entrer un nombre valide")
+                    print(" Veuillez entrer un nombre valide")
                 input_buffer = ""
         
         # Chiffres: Construire l'ID
         elif 48 <= key <= 57:  # Touches 0-9
             input_buffer += chr(key)
-            print(f"[INPUT] ID saisi: {input_buffer}")
+            print(f"ID saisi: {input_buffer}")
     
     cv2.destroyAllWindows()
-
 
 if __name__ == "__main__":
     main()

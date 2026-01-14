@@ -56,8 +56,6 @@ def init_db() -> None:
     """)
     
     conn.close()
-    print("[OK] Base de donnees initialisee avec succes")
-
 
 def ajouter_image_brute(blob: bytes) -> int:
     """
@@ -107,7 +105,7 @@ def sauvegarder_votes(liste_tuples: List[Tuple[int, int]]) -> None:
     """, [(img_id, vote, datetime.now()) for img_id, vote in liste_tuples])
     
     conn.close()
-    print(f"[OK] {len(liste_tuples)} votes enregistres")
+    print(f" {len(liste_tuples)} votes enregistres")
 
 
 def get_images_intelligentes(batch_size: int = 9) -> List[Tuple[int, bytes]]:

@@ -1,6 +1,6 @@
 """
 Fonctionnalités:
-- Affichage d'une mosaïque 3x3 d'images (récupérées intelligemment)
+- Affichage d'une mosaïque 3x3 d'images 
 - Sélection/désélection par clic (cadre vert)
 - Validation par Entrée/Espace
 - Enregistrement des votes (1 = Oiseau, 0 = Non-Oiseau)
@@ -119,9 +119,7 @@ class InterfaceLabeling:
         # Affichage des informations
         infos = [
             f"Images selectionnees: {len(self.selections)}/{len(self.images_affichees)}",
-            f"Total images: {stats['total_images']} | Labellisees: {stats['images_labellisees']} ({stats['taux_labellisation']}%)",
-            f"Votes cette session: {self.session_votes}",
-            "",
+            f"Total images: {stats['total_images']} | Classifiees: {stats['images_labellisees']} ({stats['taux_labellisation']}%)",
             "CLIC GAUCHE: Selectionner/Deselectionner | ENTREE/ESPACE: Valider | Q: Quitter"
         ]
         
@@ -182,15 +180,12 @@ class InterfaceLabeling:
         # Mise à jour du compteur de session
         self.session_votes += len(votes)
         
-        print(f"[OK] Page validee: {len(self.selections)} oiseaux detectes sur {len(votes)} images")
+        print(f" Page validee: {len(self.selections)} oiseaux detectes sur {len(votes)} images")
     
     def lancer(self) -> None:
         """
         Lance l'interface graphique (boucle principale).
         """
-        print("=" * 60)
-        print("INTERFACE DE LABÉLISATION")
-        print("=" * 60)
         print("\nInstructions:")
         print("  - CLIC GAUCHE: Sélectionner/Désélectionner une image")
         print("  - ENTRÉE ou ESPACE: Valider la page et passer à la suivante")
@@ -199,35 +194,35 @@ class InterfaceLabeling:
         print("  1. Images jamais vues (priorité)")
         print("  2. Images incertaines (désaccord)")
         print("  3. Images aléatoires")
-        print("=" * 60)
-        
+        print("\n")
+
         # Vérification de la base
         stats = database.get_statistiques()
         if stats['total_images'] == 0:
-            print("\n[ERREUR] Aucune image en base. Lancez d'abord: python preprocess.py")
+            print("\n Aucune image en base. Lancez d'abord: python preprocess.py")
             return
         
         # Création de la fenêtre
-        cv2.namedWindow('Labeling - Oiseau vs Non-Oiseau', cv2.WINDOW_AUTOSIZE)
-        cv2.setMouseCallback('Labeling - Oiseau vs Non-Oiseau', self.callback_souris)
-        
+        cv2.namedWindow('Systeme de CaptCha Oiseau vs Non-Oiseau', cv2.WINDOW_AUTOSIZE)
+        cv2.setMouseCallback('Systeme de CaptCha Oiseau vs Non-Oiseau', self.callback_souris)
+         
         # Chargement du premier batch
         if not self.charger_batch():
-            print("\n[ERREUR] Impossible de charger des images.")
+            print("\n Impossible de charger des images.")
             return
         
         # Boucle principale
         while True:
             # Dessin de l'interface
             self.canvas = self.dessiner_interface()
-            cv2.imshow('Labeling - Oiseau vs Non-Oiseau', self.canvas)
+            cv2.imshow('Systeme de CaptCha Oiseau vs Non-Oiseau', self.canvas)
             
             # Gestion des touches
             key = cv2.waitKey(1) & 0xFF
             
             # Q: Quitter
             if key == ord('q') or key == ord('Q'):
-                print("\n[>>] Fermeture de l'application")
+                print("\n Fermeture de l'application")
                 break
             
             # Entrée ou Espace: Valider
@@ -236,21 +231,17 @@ class InterfaceLabeling:
                 
                 # Chargement du batch suivant
                 if not self.charger_batch():
-                    print("\n[OK] Toutes les images ont ete labellisees!")
+                    print("\n Toutes les images ont ete labellisees!")
                     print(f"  Total de votes cette session: {self.session_votes}")
                     break
         
         # Fermeture
         cv2.destroyAllWindows()
-        
         # Statistiques finales
-        print("\n" + "=" * 60)
-        print("SESSION TERMINEE")
-        print("=" * 60)
         stats = database.get_statistiques()
-        print(f"[OK] Images labellisees: {stats['images_labellisees']}/{stats['total_images']} ({stats['taux_labellisation']}%)")
-        print(f"[OK] Total de votes: {stats['total_votes']}")
-        print(f"[OK] Votes cette session: {self.session_votes}")
+        print(f" Images labellisees: {stats['images_labellisees']}/{stats['total_images']} ({stats['taux_labellisation']}%)")
+        print(f" Total de votes: {stats['total_votes']}")
+        print(f" Votes cette session: {self.session_votes}")
     
     def callback_souris(self, event, x, y, flags, param):
         """
@@ -263,7 +254,6 @@ class InterfaceLabeling:
         """
         if event == cv2.EVENT_LBUTTONDOWN:
             self.gerer_clic(x, y)
-
 
 def main():
     """Point d'entrée principal."""
