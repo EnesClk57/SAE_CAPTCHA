@@ -1,0 +1,40 @@
+# Fichiers de base de données
+*.duckdb
+*.duckdb.wal
+
+# Fichiers temporaires Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Répertoires temporaires
+temp_images/
+dataset.zip
+
+# Images sources (trop volumineuses pour GitHub)
+images_sources/
+
+# Exports de données
+export_*/
+
+# Exécutables
+*.exe
+
+# Environnement virtuel
+venv/
+env/
+ENV/
+
+# Variables d'environnement
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
